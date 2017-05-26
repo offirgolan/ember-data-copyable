@@ -34,12 +34,12 @@ const DEFAULT_OPTIONS = {
 
 export default Ember.Mixin.create({
   /**
-   * Copy options for the specific model. See DEFAULT_OPTIONS for details
+   * Copyable options for the specific model. See DEFAULT_OPTIONS for details
    *
    * @type {Object}
    * @public
    */
-  copyOptions: null,
+  copyableOptions: null,
 
   /**
    * Entry point for copying the model
@@ -54,7 +54,7 @@ export default Ember.Mixin.create({
    * @return {TaskInstance} A promise like TaskInstance
    */
   copy(deep, options, _meta) {
-    options = assign({}, DEFAULT_OPTIONS, this.get('copyOptions'), options);
+    options = assign({}, DEFAULT_OPTIONS, this.get('copyableOptions'), options);
     _meta = _meta || { copies: {}, transforms: {} };
 
     return this.get(COPY_TASK).perform(deep, options, _meta);
