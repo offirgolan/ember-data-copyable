@@ -32,10 +32,6 @@ export default function registerModels(application, options) {
       bar: belongsTo('bar', options)
     }),
 
-    'nested-list': CopyableModel.extend({
-      baz: hasMany('baz', options)
-    }),
-
     'multi': CopyableModel.extend({
       bars: hasMany('bar', options),
       baz: belongsTo('baz', options)
@@ -58,6 +54,11 @@ export default function registerModels(application, options) {
       property: attr('string'),
       fooCycle: belongsTo('foo-cycle', assign({ inverse: 'fooCycle' }, options)),
       fooCycles: hasMany('foo-cycle', assign({ inverse: null }, options))
+    }),
+
+    'foo-transform': CopyableModel.extend({
+      property: attr('string'),
+      object: attr('object')
     })
   };
 

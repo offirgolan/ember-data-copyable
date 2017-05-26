@@ -12,9 +12,6 @@ export function testConfig() {
   this.get('/bazs');
   this.get('/bazs/:id');
 
-  this.get('/nested-lists');
-  this.get('/nested-lists/:id');
-
   this.get('/multis');
   this.get('/multis/:id');
 
@@ -29,4 +26,7 @@ export function testConfig() {
 
   this.get('/foo-cycles');
   this.get('/foo-cycles/:id');
+
+  this.get('/foo-transforms');
+  this.get('/foo-transforms/:id');
 }

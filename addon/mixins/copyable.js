@@ -161,13 +161,11 @@ export default Ember.Mixin.create({
     } catch (e) {
       let copiesKeys = keys(copies);
 
-      Logger.error('[ember-data-copyable]', `Failed to copy model '${this}'. Cleaning up ${copiesKeys.length} created copies...`);
+      // Display the error
+      Logger.error(`[ember-data-copyable] Failed to copy model '${this}'. Cleaning up ${copiesKeys.length} created copies...`, e);
 
       // Unload all created records
       copiesKeys.forEach((key) => store.unloadRecord(copies[key]));
-
-      // Display the error
-      Logger.error('[ember-data-copyable]', e);
 
       // Throw so the task promise will not resolve
       throw new Error(e);

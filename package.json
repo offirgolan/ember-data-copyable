@@ -1,23 +1,30 @@
 {
   "name": "ember-data-copyable",
   "version": "0.0.0",
-  "description": "The default blueprint for ember-cli addons.",
+  "description": "Copy an Ember Data model with all of its relationships",
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "copyable",
+    "duplicate",
+    "clone",
+    "ember-data"
   ],
   "license": "MIT",
-  "author": "",
+  "author": "Offir Golan <offirgolan@gmail.com>",
   "directories": {
     "doc": "doc",
     "test": "tests"
   },
-  "repository": "",
+  "repository": "https://github.com/offirgolan/ember-data-copyable",
+  "bugs": "https://github.com/offirgolan/ember-data-copyable/issues",
+  "homepage": "https://github.com/offirgolan/ember-data-copyable",
   "scripts": {
     "build": "ember build",
     "start": "ember server",
     "test": "ember try:each"
   },
   "dependencies": {
+    "ember-assign-polyfill": "^2.0.1",
     "ember-cli-babel": "^6.0.0",
     "ember-concurrency": "^0.8.5",
     "ember-getowner-polyfill": "^1.2.3"

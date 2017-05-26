@@ -5,7 +5,7 @@ const {
   run
 } = Ember;
 
-async function getRecord(context, options, modelName, ...args) {
+export async function getRecord(context, options, modelName, ...args) {
   if (options.async) {
     return await context.store.findRecord(modelName, ...args);
   }
