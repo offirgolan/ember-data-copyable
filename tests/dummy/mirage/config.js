@@ -26,4 +26,7 @@ export function testConfig() {
 
   this.get('/foo-empties');
   this.get('/foo-empties/:id');
+
+  this.get('/foo-cycles');
+  this.get('/foo-cycles/:id');
 }

@@ -1,11 +1,11 @@
 import Ember from 'ember';
 import getTransform from 'ember-data-copyable/utils/get-transform';
+import isUndefined from 'ember-data-copyable/utils/is-undefined';
 import { task, all } from 'ember-concurrency';
 
 const {
   assign,
   Logger,
-  isNone,
   guidFor,
   isEmpty,
   canInvoke,
@@ -88,7 +88,7 @@ export default Ember.Mixin.create({
       this.eachAttribute((name, { type, options }) => {
         if (ignoreAttributes.includes(name)) {
           return;
-        } else if (!isNone(overwrite[name])) {
+        } else if (!isUndefined(overwrite[name])) {
           attrs[name] = overwrite[name];
         } else if (
             !isEmpty(type) &&
@@ -121,7 +121,7 @@ export default Ember.Mixin.create({
 
         // Copy all the relationships
         for (let { name, meta } of relationships) {
-          if (!isNone(overwrite[name])) {
+          if (!isUndefined(overwrite[name])) {
             attrs[name] = overwrite[name];
             continue;
           }
@@ -150,7 +150,13 @@ export default Ember.Mixin.create({
         }
       }
 
+      // Since overwrite can include `id` or other properties that have not been touched
+      // we want to still include them.
+      assign(attrs, overwrite);
+
+      // Set the properties on the model
       model.setProperties(attrs);
+
       return model;
     } catch (e) {
       let copiesKeys = keys(copies);

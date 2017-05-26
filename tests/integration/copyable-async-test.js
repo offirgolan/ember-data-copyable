@@ -2,11 +2,11 @@ import generateTests from './copyable-tests';
 import setupMirage from '../helpers/setup-mirage';
 import { moduleFor } from 'ember-qunit';
 
-moduleFor('copyable', 'Integration | Copyable | sync', {
+moduleFor('copyable', 'Integration | Copyable | async', {
   integration: true,
 
   beforeEach() {
-    return setupMirage(this, { async: false });
+    return setupMirage(this, { async: true });
   },
 
   afterEach() {
@@ -14,4 +14,4 @@ moduleFor('copyable', 'Integration | Copyable | sync', {
  }
 });
 
-generateTests({ async: false });
+generateTests({ async: true });
