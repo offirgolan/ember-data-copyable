@@ -1,21 +1,20 @@
 import Ember from 'ember';
 import getTransform from 'ember-data-copyable/utils/get-transform';
 import isUndefined from 'ember-data-copyable/utils/is-undefined';
+import { COPY_TASK, COPY_TASK_RUNNER, IS_COPYABLE } from 'ember-data-copyable/-private/symbols';
 import { task, all } from 'ember-concurrency';
 
 const {
   assign,
   Logger,
   guidFor,
-  isEmpty,
-  canInvoke,
+  isEmpty
 } = Ember;
 
 const {
   keys
 } = Object;
 
-const COPY_TASK = '__COPY_TASK__';
 const PRIMITIVE_TYPES = ['string', 'number', 'boolean'];
 
 const DEFAULT_OPTIONS = {
@@ -42,6 +41,12 @@ export default Ember.Mixin.create({
   copyableOptions: null,
 
   /**
+   * @type {Boolean}
+   * @private
+   */
+  [IS_COPYABLE]: true,
+
+  /**
    * Entry point for copying the model
    *
    * @method copy
@@ -53,20 +58,34 @@ export default Ember.Mixin.create({
    * @param  {Object} _meta PRIVATE. Copy meta data
    * @return {TaskInstance} A promise like TaskInstance
    */
-  copy(deep, options, _meta) {
-    options = assign({}, DEFAULT_OPTIONS, this.get('copyableOptions'), options);
-    _meta = _meta || { copies: {}, transforms: {} };
-
-    return this.get(COPY_TASK).perform(deep, options, _meta);
+  copy(/* deep, options, _meta */) {
+    return this.get(COPY_TASK_RUNNER).perform(...arguments);
   },
 
   /**
+   * The copy task runner. Allows our copy task to have a drop
+   * concurrency policy
+   *
+   * @type {Task}
+   * @private
+   */
+  [COPY_TASK_RUNNER]: task(function *() {
+    return yield this.get(COPY_TASK).perform(...arguments);
+  }).drop(),
+
+  /**
    * The copy task that gets called from `copy`. Does all the grunt work.
+   *
+   * NOTE: This task cannot have a concurrency policy since it breaks cyclical
+   *       relationships.
    *
    * @type {Task}
    * @private
    */
   [COPY_TASK]: task(function *(deep, options, _meta) {
+    options = assign({}, DEFAULT_OPTIONS, this.get('copyableOptions'), options);
+    _meta = _meta || { copies: {}, transforms: {} };
+
     let { ignoreAttributes, copyByReference, overwrite } = options;
     let { copies } = _meta;
     let { modelName } = this.constructor;
@@ -135,14 +154,18 @@ export default Ember.Mixin.create({
           let value = yield this.get(name);
 
           if (meta.kind === 'belongsTo') {
-            if (canInvoke(value, 'copy')) {
-              attrs[name] = yield value.copy(true, options.relationships[name], _meta);
+            if (value && value[IS_COPYABLE]) {
+              attrs[name] = yield value.get(COPY_TASK).perform(true, options.relationships[name], _meta);
             } else {
               attrs[name] = value;
             }
           } else if (meta.kind === 'hasMany') {
-            if (canInvoke(value.get('firstObject'), 'copy')) {
-              attrs[name] = yield all(value.invoke('copy', true, options.relationships[name], _meta));
+            let firstObject = value.get('firstObject');
+
+            if (firstObject && firstObject[IS_COPYABLE]) {
+              attrs[name] = yield all(
+                value.getEach(COPY_TASK).invoke('perform', true, options.relationships[name], _meta)
+              );
             } else {
               attrs[name] = value;
             }
