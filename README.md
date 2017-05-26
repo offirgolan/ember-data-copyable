@@ -1,6 +1,6 @@
 # Ember Data Copyable
 
-[![Build Status](https://travis-ci.org/offirgolan/ember-data-copyable.svg?branch=master)](https://travis-ci.org/offirgolan/eember-data-copyable)
+[![Build Status](https://travis-ci.org/offirgolan/ember-data-copyable.svg?branch=master)](https://travis-ci.org/offirgolan/ember-data-copyable)
 [![npm version](https://badge.fury.io/js/ember-data-copyable.svg)](http://badge.fury.io/js/ember-data-copyable)
 
 Intelligently copy an Ember Data model and all of its relationships
