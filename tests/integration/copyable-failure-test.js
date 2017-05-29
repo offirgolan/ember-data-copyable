@@ -19,7 +19,7 @@ moduleFor('copyable', 'Integration | Copyable | failure', {
 });
 
 test('it handles async failures', async function(assert) {
-  assert.expect(1);
+  assert.expect(2);
 
   this.server.get('/foos/1', { errors: ['There was an error'] }, 500);
 
@@ -33,13 +33,16 @@ test('it handles async failures', async function(assert) {
     try {
       await model.copy(true);
     } catch (e) {
+      let models = this.store.peekAll('bar');
+
       assert.ok(e);
+      assert.equal(models.get('length'), 1, 'All created copies were cleaned up');
     }
   });
 });
 
 test('it handles task cancellation', async function(assert) {
-  assert.expect(1);
+  assert.expect(2);
 
   let model;
 
@@ -54,7 +57,10 @@ test('it handles task cancellation', async function(assert) {
 
       await taskInstance;
     } catch (e) {
+      let models = this.store.peekAll('bar');
+
       assert.ok(e);
+      assert.equal(models.get('length'), 1, 'All created copies were cleaned up');
     }
   });
 });
