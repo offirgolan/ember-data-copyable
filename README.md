@@ -13,6 +13,7 @@ Intelligently copy an Ember Data model and all of its relationships
 - Handles custom transforms to create true copies
 - Overwrite, ignore attributes, and copy objects by reference
 - Intelligent failure and cleanup
+- Uses [ember-concurrency](https://github.com/machty/ember-concurrency) to allow cancelling a copy task
 
 ## Installation
 
@@ -69,7 +70,9 @@ async function copy(deep = false, options = {}) {};
 
     Copy options. See [options](#options) for more details.
 
-### Example
+### Examples
+
+#### Normal Usage
 
 ```js
 const model = this.get('store').peekRecord('user', 1);
@@ -81,15 +84,29 @@ model.copy(true, {
     firstName: 'Offir'
   }
 }).then((copy) => {
+  // Handle success
   return copy.save();
 }, (e) => {
-  // Handle error
+  // Handle error or cancellation
 })
 ```
 
 In your model you can specify default options via the `copyableOptions` object.
 A similar options object can be passed into the `copy` method to override model specific options.
 Please see [options](#options) for more details.
+
+#### Task Cancellation
+
+Since the `copy` method returns an [ember-concurrency](https://github.com/machty/ember-concurrency) TaskInstance,
+we have the ability to cancel a running copy task at any time.
+
+```js
+const model = this.get('store').peekRecord('user', 1);
+const copyTaskInstance = model.copy(true);
+
+// Cancel our copy task
+copyTaskInstance.cancel();
+```
 
 ## Copying Relationships
 

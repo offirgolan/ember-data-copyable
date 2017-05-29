@@ -37,3 +37,24 @@ test('it handles async failures', async function(assert) {
     }
   });
 });
+
+test('it handles task cancellation', async function(assert) {
+  assert.expect(1);
+
+  let model;
+
+  await run(async () => {
+    model = await this.store.findRecord('bar', 1);
+  });
+
+  await run(async () => {
+    try {
+      let taskInstance = model.copy(true);
+      taskInstance.cancel();
+
+      await taskInstance;
+    } catch (e) {
+      assert.ok(e);
+    }
+  });
+});
