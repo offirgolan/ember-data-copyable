@@ -40,6 +40,7 @@ import DS from 'ember-data';
 import Copyable from 'ember-data-copyable';
 
 export default DS.Model.extend(Copyable, {
+  guid: DS.attr('number'),
   firstName: DS.attr('string'),
   lastName: DS.attr('string'),
   address: DS.belongsTo('address'),
@@ -49,6 +50,14 @@ export default DS.Model.extend(Copyable, {
   copyableOptions: {}
 });
 ```
+
+In your model you can specify default options via the `copyableOptions` object.
+Please see [options](#options) for more details.
+
+### Copying Relationships
+
+To copy a model's relationship, that relational model **must** have the `Copyable` mixin or else it will just
+be copied by reference.
 
 ## Usage
 
@@ -60,15 +69,19 @@ Once the model is setup, we can use the `copy` method on an instance to duplicat
 async function copy(deep = false, options = {}) {};
 ```
 
-- `deep`
+- `deep` : _Boolean_
 
     If __false__ a shallow copy of only the model's attributes will be created.
 
     If __true__, a deep copy of the model and it's realtionships will be created.
 
-- `options`:
+- `options` : _Object_
 
     Copy options. See [options](#options) for more details.
+
+    __NOTE:__ Options passed into the copy method take precedence over those specified on the model.
+
+Returns a cancelable promise like [ember-concurrency](https://github.com/machty/ember-concurrency) TaskInstance.
 
 ### Examples
 
@@ -78,9 +91,10 @@ async function copy(deep = false, options = {}) {};
 const model = this.get('store').peekRecord('user', 1);
 
 model.copy(true, {
-  ignoreAttributes: ['lastName'],
+  ignoreAttributes: ['guid'],
+  copyByReference: ['address'],
   overwrite: {
-    id: 42,
+    id: 2,
     firstName: 'Offir'
   }
 }).then((copy) => {
@@ -90,10 +104,6 @@ model.copy(true, {
   // Handle error or cancellation
 })
 ```
-
-In your model you can specify default options via the `copyableOptions` object.
-A similar options object can be passed into the `copy` method to override model specific options.
-Please see [options](#options) for more details.
 
 #### Task Cancellation
 
@@ -108,27 +118,6 @@ const copyTaskInstance = model.copy(true);
 copyTaskInstance.cancel();
 ```
 
-## Copying Relationships
-
-To copy a model's relationship, that relational model **must** have the `Copyable` mixin or else it will just
-be copied by reference.
-
-```js
-// models/address.js
-
-import DS from 'ember-data';
-import Copyable from 'ember-data-copyable';
-
-export default DS.Model.extend(Copyable, {
-  streetName: DS.attr('string'),
-  country: DS.attr('string'),
-  state: DS.attr('string')
-});
-```
-
-If the __Address__ does not have the `Copyable` mixin, a true copy will be not
-be created when copying the __User__ model.
-
 ## Options
 
 These options can either be specified via the `copyableOptions` object on the DS.Model class or
@@ -139,7 +128,7 @@ passed into the `copy` method.
 Attributes to ignore when copying.
 
 ```js
-ignoreAttributes: ['firstName', 'address']
+ignoreAttributes: ['guid', 'address']
 ```
 
 ### `copyByReference`
@@ -158,7 +147,7 @@ that are not found on the model.
 
 ```js
 overwrite: {
-  id: 42,
+  id: 2,
   firstName: 'Offir - Copy',
   address: this.get('store').createRecord('address', { /* ... */ }),
   unknownProperty: 'Foo Bar'
