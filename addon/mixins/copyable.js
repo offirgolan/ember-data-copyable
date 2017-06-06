@@ -160,7 +160,9 @@ export default Ember.Mixin.create({
       });
 
       // Copy all the relationships
-      for (let { name, meta } of relationships) {
+      for (let i = 0; i < relationships.length; i++) {
+        let { name, meta } = relationships[i];
+
         if (!isUndefined(overwrite[name])) {
           attrs[name] = overwrite[name];
           continue;
