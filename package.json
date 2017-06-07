@@ -1,6 +1,6 @@
 {
   "name": "ember-data-copyable",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Intelligently copy an Ember Data model and all of its relationships",
   "keywords": [
     "ember-addon",
