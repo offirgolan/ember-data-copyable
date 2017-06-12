@@ -179,9 +179,9 @@ export default Ember.Mixin.create({
                     Supports Ember Data 2.5+
              */
             if (meta.kind === 'hasMany') {
-              copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members)
+              copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members);
             } else if (meta.kind === 'belongsTo') {
-              copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members)
+              copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members);
             }
           } catch (e) {
             attrs[name] = this.get(name);
