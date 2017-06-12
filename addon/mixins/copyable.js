@@ -8,7 +8,8 @@ const {
   assign,
   Logger,
   guidFor,
-  isEmpty
+  isEmpty,
+  runInDebug
 } = Ember;
 
 const {
@@ -79,7 +80,7 @@ export default Ember.Mixin.create({
 
       return model;
     } catch (e) {
-      Logger.error('[ember-data-copyable]', e);
+      runInDebug(() => Logger.error('[ember-data-copyable]', e));
 
       // Throw so the task promise will be rejected
       throw new Error(e);
@@ -88,7 +89,7 @@ export default Ember.Mixin.create({
         let copiesKeys = keys(_meta.copies);
 
         // Display the error
-        Logger.error(`[ember-data-copyable] Failed to copy model '${this}'. Cleaning up ${copiesKeys.length} created copies...`);
+        runInDebug(() => Logger.error(`[ember-data-copyable] Failed to copy model '${this}'. Cleaning up ${copiesKeys.length} created copies...`));
 
         // Unload all created records
         copiesKeys.forEach((key) => store.unloadRecord(_meta.copies[key]));
@@ -170,7 +171,23 @@ export default Ember.Mixin.create({
 
         // We dont need to yield for a value if it's just copied by ref.
         if (copyByReference.includes(name)) {
-          attrs[name] = this.get(name);
+          try {
+            let ref = this[meta.kind](name);
+            let copyRef = model[meta.kind](name);
+
+            /*
+              NOTE: This is currently private API but has been approved @igorT.
+                    Supports Ember Data 2.5+
+             */
+            if (meta.kind === 'hasMany') {
+              copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members);
+            } else if (meta.kind === 'belongsTo') {
+              copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members);
+            }
+          } catch (e) {
+            attrs[name] = this.get(name);
+          }
+
           continue;
         }
 

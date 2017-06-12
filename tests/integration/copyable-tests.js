@@ -51,28 +51,32 @@ export default function generateTests(options = { async: false }) {
   });
 
   test('it copies belongsTo relationship by reference', async function(assert) {
-    assert.expect(4);
+    assert.expect(5);
 
-    let model;
+    let model, copy;
 
     await run(async () => {
       model = await getRecord(this, options, 'bar', 1);
     });
 
     await run(async () => {
-      let copy = await model.copy(true, {
+      copy = await model.copy(true, {
         copyByReference: ['foo']
       });
+    });
 
-      assert.equal(model.get('foo.property'), copy.get('foo.property'));
-      assert.notEqual(copy.get('id'), 1);
-      assert.ok(copy.get('foo.id'));
+    await run(async () => {
+      assert.equal(model.belongsTo('foo').id(), copy.belongsTo('foo').id());
 
       if (options.async) {
         assert.equal(await model.get('foo'), await copy.get('foo'));
       } else {
         assert.equal(model.get('foo'), copy.get('foo'));
       }
+
+      assert.equal(model.get('foo.property'), copy.get('foo.property'));
+      assert.notEqual(copy.get('id'), 1);
+      assert.ok(copy.get('foo.id'));
     });
   });
 
@@ -100,6 +104,8 @@ export default function generateTests(options = { async: false }) {
   });
 
   test('it copies hasMany relationship', async function(assert) {
+    assert.expect(3);
+
     let model;
 
     await run(async () => {
@@ -111,33 +117,34 @@ export default function generateTests(options = { async: false }) {
 
       assert.notEqual(model.get('foos'), copy.get('foos'));
       assert.equal(model.get('foos.length'), copy.get('foos.length'));
-
-      model.get('foos').forEach((foo, i) => {
-        let fooCopy = copy.get('foos').objectAt(i);
-
-        assert.notEqual(foo, fooCopy);
-        assert.equal(foo.get('property'), fooCopy.get('property'));
-      });
+      assert.deepEqual(model.get('foos').getEach('property'), copy.get('foos').getEach('property'));
     });
   });
 
   test('it copies hasMany relationship by reference', async function(assert) {
-    let model;
+    assert.expect(3);
+
+    let model, copy;
 
     await run(async () => {
       model = await getRecord(this, options, 'baz', 1);
     });
 
     await run(async () => {
-      let copy = await model.copy(true, {
+      copy = await model.copy(true, {
         copyByReference: ['foos']
       });
+    });
+
+    await run(async () => {
+      assert.deepEqual(model.hasMany('foos').ids(), copy.hasMany('foos').ids());
+
+      if (options.async) {
+        await model.get('foos');
+      }
 
       assert.equal(model.get('foos.length'), copy.get('foos.length'));
-
-      model.get('foos').forEach((foo, i) => {
-        assert.equal(foo, copy.get('foos').objectAt(i));
-      });
+      assert.deepEqual(model.get('foos').getEach('id'), copy.get('foos').getEach('id'));
     });
   });
 
