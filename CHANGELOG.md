@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v0.2.0
+
+### Pull Requests
+
+- [#2](https://github.com/offirgolan/ember-data-copyable/pull/2)  Improved Copy by Reference  *by [Offir Golan](https://github.com/offirgolan)*
+
 ## v0.1.1
 
 ### Pull Requests
