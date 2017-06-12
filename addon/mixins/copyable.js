@@ -170,17 +170,21 @@ export default Ember.Mixin.create({
 
         // We dont need to yield for a value if it's just copied by ref.
         if (copyByReference.includes(name)) {
-          let ref = this[meta.kind](name);
-          let copyRef = model[meta.kind](name);
+          try {
+            let ref = this[meta.kind](name);
+            let copyRef = model[meta.kind](name);
 
-          /*
-            NOTE: This is currently private API but has been approved @igorT.
-                  Supports Ember Data 2.5+
-           */
-          if (meta.kind === 'hasMany') {
-            copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members)
-          } else if (meta.kind === 'belongsTo') {
-            copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members)
+            /*
+              NOTE: This is currently private API but has been approved @igorT.
+                    Supports Ember Data 2.5+
+             */
+            if (meta.kind === 'hasMany') {
+              copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members)
+            } else if (meta.kind === 'belongsTo') {
+              copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members)
+            }
+          } catch (e) {
+            attrs[name] = this.get(name);
           }
 
           continue;
