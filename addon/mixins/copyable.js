@@ -126,7 +126,7 @@ export default Ember.Mixin.create({
     copies[guid] = model;
 
     // Copy all the attributes
-    this.eachAttribute((name, { type, options }) => {
+    this.eachAttribute((name, { type, options: attributeOptions }) => {
       if (ignoreAttributes.includes(name)) {
         return;
       } else if (!isUndefined(overwrite[name])) {
@@ -141,8 +141,8 @@ export default Ember.Mixin.create({
 
         // Run the transform on the value. This should guarantee that we get
         // a new instance.
-        value = transform.serialize(value, options);
-        value = transform.deserialize(value, options);
+        value = transform.serialize(value, attributeOptions);
+        value = transform.deserialize(value, attributeOptions);
 
         attrs[name] = value;
       } else {
