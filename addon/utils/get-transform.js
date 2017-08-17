@@ -1,5 +1,3 @@
-import Ember from 'ember';
-
 /**
  * Get the transform for a given type. Uses the private `_meta` cache.
  *
