@@ -1,9 +1,5 @@
 import Ember from 'ember';
 
-const {
-  getOwner
-} = Ember;
-
 /**
  * Get the transform for a given type. Uses the private `_meta` cache.
  *
