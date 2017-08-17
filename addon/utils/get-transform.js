@@ -15,6 +15,6 @@ const {
  * @return {DS.Transform}
  */
 export default function getTransform(model, type, _meta) {
-  _meta.transforms[type] = _meta.transforms[type] || getOwner(model).lookup(`transform:${type}`);
+  _meta.transforms[type] = _meta.transforms[type] || model.store.serializerFor(model.constructor.modelName).transformFor(type);
   return _meta.transforms[type];
 }
