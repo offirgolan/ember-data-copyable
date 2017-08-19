@@ -137,12 +137,21 @@ export default Ember.Mixin.create({
           !PRIMITIVE_TYPES.includes(type)
       ) {
         let value = this.get(name);
-        let transform = getTransform(this, type, _meta);
 
-        // Run the transform on the value. This should guarantee that we get
-        // a new instance.
-        value = transform.serialize(value, attributeOptions);
-        value = transform.deserialize(value, attributeOptions);
+        if (
+            (Ember.typeOf(value) === 'instance') &&
+            (Ember.typeOf(value.copy) === 'function')
+        ) {
+          value = value.copy(deep);
+        }
+        else {
+          let transform = getTransform(this, type, _meta);
+
+          // Run the transform on the value. This should guarantee that we get
+          // a new instance.
+          value = transform.serialize(value, attributeOptions);
+          value = transform.deserialize(value, attributeOptions);
+        }
 
         attrs[name] = value;
       } else {
