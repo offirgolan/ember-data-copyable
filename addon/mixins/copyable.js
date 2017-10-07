@@ -9,7 +9,8 @@ const {
   Logger,
   guidFor,
   isEmpty,
-  runInDebug
+  runInDebug,
+  canInvoke
 } = Ember;
 
 const {
@@ -137,12 +138,21 @@ export default Ember.Mixin.create({
           !PRIMITIVE_TYPES.includes(type)
       ) {
         let value = this.get(name);
-        let transform = getTransform(this, type, _meta);
 
-        // Run the transform on the value. This should guarantee that we get
-        // a new instance.
-        value = transform.serialize(value, attributeOptions);
-        value = transform.deserialize(value, attributeOptions);
+        if (canInvoke(value, 'copy')) {
+          // "value" is an Ember.Object using the Ember.Copyable API (if you use
+          // the "Ember Data Model Fragments" addon and "value" is a fragment or
+          // if use your own serializer where you deserialize a value to an
+          // Ember.Object using this Ember.Copyable API)
+          value = value.copy(deep);
+        } else {
+          let transform = getTransform(this, type, _meta);
+
+          // Run the transform on the value. This should guarantee that we get
+          // a new instance.
+          value = transform.serialize(value, attributeOptions);
+          value = transform.deserialize(value, attributeOptions);
+        }
 
         attrs[name] = value;
       } else {
