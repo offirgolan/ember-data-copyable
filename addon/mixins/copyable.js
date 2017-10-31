@@ -10,7 +10,7 @@ const {
   guidFor,
   isEmpty,
   runInDebug,
-  canInvoke
+  Copyable
 } = Ember;
 
 const {
@@ -139,7 +139,7 @@ export default Ember.Mixin.create({
       ) {
         let value = this.get(name);
 
-        if (canInvoke(value, 'copy')) {
+        if (Copyable && Copyable.detect(value)) {
           // "value" is an Ember.Object using the Ember.Copyable API (if you use
           // the "Ember Data Model Fragments" addon and "value" is a fragment or
           // if use your own serializer where you deserialize a value to an
