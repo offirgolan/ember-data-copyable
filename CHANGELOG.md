@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## v0.2.2
+
+### Pull Requests
+
+- [#10](https://github.com/offirgolan/ember-data-copyable/pull/10)  Use `Ember.Copyable.detect` *by [Mikaël Pirio](https://github.com/mpirio)*
+- [#11](https://github.com/offirgolan/ember-data-copyable/pull/11)  [Feature] Other Attributes *by [Offir Golan](https://github.com/offirgolan)*
+
 ## v0.2.1
 
 ### Pull Requests
