@@ -55,6 +55,26 @@ test('it ignores attributes', async function(assert) {
   });
 });
 
+test('it copes other attributes', async function(assert) {
+  assert.expect(2);
+
+  let model = this.store.peekRecord('bar', 1);
+
+  model.setProperties({
+    one: 1,
+    two: 2
+  });
+
+  await run(async () => {
+    let copy = await model.copy(true, {
+      otherAttributes: ['one', 'two']
+    });
+
+    assert.equal(copy.get('one'), 1);
+    assert.equal(copy.get('two'), 2);
+  });
+});
+
 test('it copies with nested options', async function(assert) {
   assert.expect(3);
 

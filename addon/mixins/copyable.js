@@ -23,6 +23,9 @@ const DEFAULT_OPTIONS = {
   // List of all attributes to ignore
   ignoreAttributes: [],
 
+  // List of other attributes to copy
+  otherAttributes: [],
+
   // List of all attributes to copy by reference
   copyByReference: [],
 
@@ -110,7 +113,7 @@ export default Ember.Mixin.create({
   [COPY_TASK]: task(function *(deep, options, _meta) {
     options = assign({}, DEFAULT_OPTIONS, this.get('copyableOptions'), options);
 
-    let { ignoreAttributes, copyByReference, overwrite } = options;
+    let { ignoreAttributes, otherAttributes, copyByReference, overwrite } = options;
     let { copies } = _meta;
     let { modelName } = this.constructor;
     let store = this.get('store');
@@ -123,7 +126,7 @@ export default Ember.Mixin.create({
       return copies[guid];
     }
 
-    let model  = store.createRecord(modelName);
+    let model = store.createRecord(modelName);
     copies[guid] = model;
 
     // Copy all the attributes
@@ -223,9 +226,9 @@ export default Ember.Mixin.create({
       }
     }
 
-    // Since overwrite can include `id` or other properties that have not been touched
-    // we want to still include them.
-    assign(attrs, overwrite);
+    // Build the final attrs pojo by merging otherAttributes, the copied
+    // attributes, and ant overwrites specified.
+    attrs = assign(this.getProperties(otherAttributes), attrs, overwrite);
 
     // Set the properties on the model
     model.setProperties(attrs);
