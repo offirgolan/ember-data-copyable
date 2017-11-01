@@ -131,6 +131,15 @@ Attributes to ignore when copying.
 ignoreAttributes: ['guid', 'address']
 ```
 
+### `otherAttributes`
+
+Other attributes to copy over that are not defined via DS.attr, DS.belongsTo,
+or DS.hasMany.
+
+```js
+otherAttributes: ['timestamp', 'someFlag']
+```
+
 ### `copyByReference`
 
 Attributes to copy only by reference. If the attribute has the `Copyable` mixin, it will
