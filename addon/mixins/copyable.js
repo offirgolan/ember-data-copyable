@@ -174,8 +174,6 @@ export default Ember.Mixin.create({
     // Copy all the relationships
     for (let i = 0; i < relationships.length; i++) {
       let { name, meta } = relationships[i];
-      let relOptions = options.relationships[name];
-      let shouldCopyRelByRef = !deep || (relOptions && relOptions.deep === false);
 
       if (!isUndefined(overwrite[name])) {
         attrs[name] = overwrite[name];
@@ -184,7 +182,7 @@ export default Ember.Mixin.create({
 
       // We dont need to yield for a value if it's just copied by ref
       // or if we are doing a shallow copy
-      if (shouldCopyRelByRef || copyByReference.includes(name)) {
+      if (!deep || copyByReference.includes(name)) {
         try {
           let ref = this[meta.kind](name);
           let copyRef = model[meta.kind](name);
@@ -206,10 +204,12 @@ export default Ember.Mixin.create({
       }
 
       let value = yield this.get(name);
+      let relOptions = options.relationships[name];
+      let deepRel = relOptions && typeof relOptions.deep === 'boolean' ? relOptions.deep : deep;
 
       if (meta.kind === 'belongsTo') {
         if (value && value.get(IS_COPYABLE)) {
-          attrs[name] = yield value.get(COPY_TASK).perform(true, relOptions, _meta);
+          attrs[name] = yield value.get(COPY_TASK).perform(deepRel, relOptions, _meta);
         } else {
           attrs[name] = value;
         }
@@ -218,7 +218,7 @@ export default Ember.Mixin.create({
 
         if (firstObject && firstObject.get(IS_COPYABLE)) {
           attrs[name] = yield all(
-            value.getEach(COPY_TASK).invoke('perform', true, relOptions, _meta)
+            value.getEach(COPY_TASK).invoke('perform', deepRel, relOptions, _meta)
           );
         } else {
           attrs[name] = value;

@@ -100,15 +100,15 @@ test('it copies with nested options', async function(assert) {
 test('it handles relational deep copy overrides', async function(assert) {
   assert.expect(1);
 
-  let model = this.store.peekRecord('bar', 1);
+  let model = this.store.peekRecord('baz', 1);
 
   await run(async () => {
     let copy = await model.copy(true, {
       relationships: {
-        foo: { deep: false }
+        bar: { deep: false }
       }
     });
 
-    assert.equal(copy.get('foo.id'), 1);
+    assert.equal(copy.get('bar.foo.id'), 1);
   });
 });

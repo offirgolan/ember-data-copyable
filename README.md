@@ -166,6 +166,8 @@ overwrite: {
 ### `relationships`
 
 Specify options to nested models.
+Nested relationships options can also include a `deep` option. If set to false,
+the relationship will be shallow copied.
 
 ```js
 relationships: {
@@ -177,6 +179,9 @@ relationships: {
   },
   friends: {
     copyByReference: ['address']
+  },
+  profile: {
+    deep: false
   }
 }
 ```
