@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v0.3.0
+
+### Pull Requests
+
+- [#12](https://github.com/offirgolan/ember-data-copyable/pull/12)  Shallow Copy should copy over all relationships by reference *by [Offir Golan](https://github.com/offirgolan)*
+
 ## v0.2.2
 
 ### Pull Requests
