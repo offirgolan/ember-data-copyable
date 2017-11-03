@@ -2,7 +2,8 @@ import Ember from 'ember';
 import { test } from 'ember-qunit';
 
 const {
-  run
+  run,
+  RSVP: { allSettled }
 } = Ember;
 
 export async function getRecord(context, options, modelName, ...args) {
@@ -28,6 +29,29 @@ export default function generateTests(options = { async: false }) {
 
       assert.equal(model.get('property'), copy.get('property'));
       assert.notEqual(copy.get('id'), 1);
+    });
+  });
+
+  test('it shallow copies relationships', async function(assert) {
+    assert.expect(2);
+
+    let model, copy;
+
+    await run(async () => {
+      model = await getRecord(this, options, 'baz', 1);
+    });
+
+    await run(async () => {
+      copy = await model.copy(false);
+    });
+
+    await run(async () => {
+      if (options.async) {
+        await allSettled([ model.get('foos'), model.get('bar') ]);
+      }
+
+      assert.equal(model.get('bar.id'), copy.get('bar.id'));
+      assert.deepEqual(model.get('foos').getEach('id'), copy.get('foos').getEach('id'));
     });
   });
 

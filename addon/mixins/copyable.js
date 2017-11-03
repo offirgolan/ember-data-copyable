@@ -118,6 +118,7 @@ export default Ember.Mixin.create({
     let { modelName } = this.constructor;
     let store = this.get('store');
     let guid = guidFor(this);
+    let relationships = [];
     let attrs = {};
 
     // Handle cyclic relationships: If the model has already been copied,
@@ -163,65 +164,64 @@ export default Ember.Mixin.create({
       }
     });
 
-    if (deep) {
-      let relationships = [];
+    // Get all the relationship data
+    this.eachRelationship((name, meta) => {
+      if (!ignoreAttributes.includes(name)) {
+        relationships.push({ name, meta });
+      }
+    });
 
-      // Get all the relationship data
-      this.eachRelationship((name, meta) => {
-        if (!ignoreAttributes.includes(name)) {
-          relationships.push({ name, meta });
-        }
-      });
+    // Copy all the relationships
+    for (let i = 0; i < relationships.length; i++) {
+      let { name, meta } = relationships[i];
 
-      // Copy all the relationships
-      for (let i = 0; i < relationships.length; i++) {
-        let { name, meta } = relationships[i];
+      if (!isUndefined(overwrite[name])) {
+        attrs[name] = overwrite[name];
+        continue;
+      }
 
-        if (!isUndefined(overwrite[name])) {
-          attrs[name] = overwrite[name];
-          continue;
-        }
+      // We dont need to yield for a value if it's just copied by ref
+      // or if we are doing a shallow copy
+      if (!deep || copyByReference.includes(name)) {
+        try {
+          let ref = this[meta.kind](name);
+          let copyRef = model[meta.kind](name);
 
-        // We dont need to yield for a value if it's just copied by ref.
-        if (copyByReference.includes(name)) {
-          try {
-            let ref = this[meta.kind](name);
-            let copyRef = model[meta.kind](name);
-
-            /*
-              NOTE: This is currently private API but has been approved @igorT.
-                    Supports Ember Data 2.5+
-             */
-            if (meta.kind === 'hasMany') {
-              copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members);
-            } else if (meta.kind === 'belongsTo') {
-              copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members);
-            }
-          } catch (e) {
-            attrs[name] = this.get(name);
+          /*
+            NOTE: This is currently private API but has been approved @igorT.
+                  Supports Ember Data 2.5+
+            */
+          if (meta.kind === 'hasMany') {
+            copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members);
+          } else if (meta.kind === 'belongsTo') {
+            copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members);
           }
-
-          continue;
+        } catch (e) {
+          attrs[name] = this.get(name);
         }
 
-        let value = yield this.get(name);
+        continue;
+      }
 
-        if (meta.kind === 'belongsTo') {
-          if (value && value.get(IS_COPYABLE)) {
-            attrs[name] = yield value.get(COPY_TASK).perform(true, options.relationships[name], _meta);
-          } else {
-            attrs[name] = value;
-          }
-        } else if (meta.kind === 'hasMany') {
-          let firstObject = value.get('firstObject');
+      let value = yield this.get(name);
+      let relOptions = options.relationships[name];
+      let deepRel = relOptions && typeof relOptions.deep === 'boolean' ? relOptions.deep : deep;
 
-          if (firstObject && firstObject.get(IS_COPYABLE)) {
-            attrs[name] = yield all(
-              value.getEach(COPY_TASK).invoke('perform', true, options.relationships[name], _meta)
-            );
-          } else {
-            attrs[name] = value;
-          }
+      if (meta.kind === 'belongsTo') {
+        if (value && value.get(IS_COPYABLE)) {
+          attrs[name] = yield value.get(COPY_TASK).perform(deepRel, relOptions, _meta);
+        } else {
+          attrs[name] = value;
+        }
+      } else if (meta.kind === 'hasMany') {
+        let firstObject = value.get('firstObject');
+
+        if (firstObject && firstObject.get(IS_COPYABLE)) {
+          attrs[name] = yield all(
+            value.getEach(COPY_TASK).invoke('perform', deepRel, relOptions, _meta)
+          );
+        } else {
+          attrs[name] = value;
         }
       }
     }
