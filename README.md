@@ -71,9 +71,11 @@ async function copy(deep = false, options = {}) {};
 
 - `deep` : _Boolean_
 
-    If __false__ a shallow copy of only the model's attributes will be created.
+    If __false__ a shallow copy of the model's attributes will be created.
+    All relationships will be copied over by reference.
 
     If __true__, a deep copy of the model and it's realtionships will be created.
+    If a relational model has the Copyable mixin, it will also be deep copied.
 
 - `options` : _Object_
 
