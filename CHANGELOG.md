@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v0.3.1
+
+#### Commits
+
+- [27ec429a](https://github.com/offirgolan/ember-data-copyable/commit/27ec429a3a83f5bc37c17ece7e2e5645157a9dc5) **update ember-cli-dependency-checker (#16)**: An addon is trying to access project.nodeModulesPath with recent ember-cli versions. *by [Björn Harrtell](https://github.com/bjornharrtell)*
+
 ## v0.3.0
 
 ### Pull Requests
