@@ -186,15 +186,16 @@ export default Ember.Mixin.create({
         try {
           let ref = this[meta.kind](name);
           let copyRef = model[meta.kind](name);
+          let addFn = copyRef.hasManyRelationship.addInternalModels ? 'addInternalModels' : 'addRecords';
 
           /*
             NOTE: This is currently private API but has been approved @igorT.
                   Supports Ember Data 2.5+
             */
           if (meta.kind === 'hasMany') {
-            copyRef.hasManyRelationship.addRecords(ref.hasManyRelationship.members);
+            copyRef.hasManyRelationship[addFn](ref.hasManyRelationship.members);
           } else if (meta.kind === 'belongsTo') {
-            copyRef.belongsToRelationship.addRecords(ref.belongsToRelationship.members);
+            copyRef.belongsToRelationship[addFn](ref.belongsToRelationship.members);
           }
         } catch (e) {
           attrs[name] = this.get(name);
