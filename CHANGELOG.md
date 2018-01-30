@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v0.3.2
+
+### Pull Requests
+
+- [#17](https://github.com/offirgolan/ember-data-copyable/pull/17)  Updates for ember-data 2.14+ *by [onumossn](https://github.com/onumossn)*
+
 ## v0.3.1
 
 #### Commits
