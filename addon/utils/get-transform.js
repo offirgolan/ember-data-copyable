@@ -1,9 +1,3 @@
-import Ember from 'ember';
-
-const {
-  getOwner
-} = Ember;
-
 /**
  * Get the transform for a given type. Uses the private `_meta` cache.
  *
@@ -15,6 +9,6 @@ const {
  * @return {DS.Transform}
  */
 export default function getTransform(model, type, _meta) {
-  _meta.transforms[type] = _meta.transforms[type] || getOwner(model).lookup(`transform:${type}`);
+  _meta.transforms[type] = _meta.transforms[type] || model.store.serializerFor(model.constructor.modelName).transformFor(type);
   return _meta.transforms[type];
 }
