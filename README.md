@@ -17,7 +17,7 @@ Intelligently copy an Ember Data model and all of its relationships
 
 ## Installation
 
-```
+```bash
 ember install ember-data-copyable
 ```
 
@@ -26,6 +26,7 @@ ember install ember-data-copyable
 - ### [Changelog](CHANGELOG.md)
 
 ## Looking for help?
+
 If it is a bug [please open an issue on GitHub](http://github.com/offirgolan/ember-data-copyable/issues).
 
 ## Setup
