@@ -1,8 +1,4 @@
-import Ember from 'ember';
-
-const {
-  getOwner
-} = Ember;
+import { getOwner } from '@ember/application';
 
 /**
  * Get the transform for a given type. Uses the private `_meta` cache.

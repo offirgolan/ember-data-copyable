@@ -1,33 +1,23 @@
-import Ember from 'ember';
+import { run } from '@ember/runloop';
 import setupMirage from '../helpers/setup-mirage';
-import { moduleFor, test } from 'ember-qunit';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-const {
-  run
-} = Ember;
+module('Integration | Copyable | transforms', function(hooks) {
+  setupTest(hooks);
+  setupMirage(hooks, { async: false });
 
-moduleFor('copyable', 'Integration | Copyable | transforms', {
-  integration: true,
+  test('it handles object transform', async function(assert) {
+    assert.expect(3);
 
-  beforeEach() {
-    return setupMirage(this, { async: false });
-  },
+    let model = this.store.peekRecord('foo-transform', 1);
 
-  afterEach() {
-   this.server.shutdown();
- }
-});
+    await run(async () => {
+      let copy = await model.copy(true);
 
-test('it handles object transform', async function(assert) {
-  assert.expect(3);
-
-  let model = this.store.peekRecord('foo-transform', 1);
-
-  await run(async () => {
-    let copy = await model.copy(true);
-
-    assert.equal(model.get('object.foo'), 'bar');
-    assert.equal(copy.get('object.foo'), 'bar');
-    assert.notEqual(copy.get('object'), model.get('object.foo'));
+      assert.equal(model.get('object.foo'), 'bar');
+      assert.equal(copy.get('object.foo'), 'bar');
+      assert.notEqual(copy.get('object'), model.get('object.foo'));
+    });
   });
 });

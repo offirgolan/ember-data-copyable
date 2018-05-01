@@ -1,8 +1,8 @@
 /* global define, requirejs */
-import Ember from 'ember';
 import Copyable from 'ember-data-copyable';
 import DS from 'ember-data';
 import config from '../../config/environment';
+import { assign } from '@ember/polyfills';
 
 const {
   attr,
@@ -11,13 +11,9 @@ const {
   hasMany
 } = DS;
 
-const {
-  assign
-} = Ember;
-
 const CopyableModel = Model.extend(Copyable);
 
-export default function registerModels(application, options) {
+export default function registerModels(options) {
   const Models = {
     'foo': CopyableModel.extend({
       property: attr('string')

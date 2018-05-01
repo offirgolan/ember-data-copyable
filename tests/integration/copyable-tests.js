@@ -1,10 +1,6 @@
-import Ember from 'ember';
-import { test } from 'ember-qunit';
-
-const {
-  run,
-  RSVP: { allSettled }
-} = Ember;
+import { run } from '@ember/runloop';
+import { allSettled } from 'rsvp';
+import { test } from 'qunit';
 
 export async function getRecord(context, options, modelName, ...args) {
   if (options.async) {
