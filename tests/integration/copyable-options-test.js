@@ -1,10 +1,6 @@
-import Ember from 'ember';
 import setupMirage from '../helpers/setup-mirage';
 import { moduleFor, test } from 'ember-qunit';
-
-const {
-  run
-} = Ember;
+import { run } from '@ember/runloop';
 
 moduleFor('copyable', 'Integration | Copyable | options', {
   integration: true,
