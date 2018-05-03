@@ -26,10 +26,8 @@
     "test:all": "ember try:each"
   },
   "dependencies": {
-    "ember-assign-polyfill": "^2.0.1",
     "ember-cli-babel": "^6.6.0",
-    "ember-concurrency": "^0.8.5",
-    "ember-getowner-polyfill": "^1.2.3"
+    "ember-concurrency": "^0.8.5"
   },
   "devDependencies": {
     "broccoli-asset-rev": "^2.4.5",
