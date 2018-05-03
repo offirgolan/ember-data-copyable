@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## v0.4.0
+
+### Pull Requests
+
+- [#19](https://github.com/offirgolan/ember-data-copyable/pull/19)  Upgrade to ember-cli 3.1.3
+ *by [john-griffin](https://github.com/john-griffin)*
+
 ## v0.3.2
 
 ### Pull Requests
