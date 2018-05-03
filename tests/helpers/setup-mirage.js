@@ -1,11 +1,7 @@
-import Ember from 'ember';
 import defineModels from './define-models';
 import { startMirage } from 'dummy/initializers/ember-cli-mirage';
-
-const {
-  RSVP,
-  getOwner
-} = Ember;
+import RSVP from 'rsvp';
+import { getOwner } from '@ember/application';
 
 export default function setupMirage(application, options) {
   // Register our models

@@ -3,13 +3,14 @@ import getTransform from 'ember-data-copyable/utils/get-transform';
 import isUndefined from 'ember-data-copyable/utils/is-undefined';
 import { COPY_TASK, COPY_TASK_RUNNER, IS_COPYABLE } from 'ember-data-copyable/-private/symbols';
 import { task, all } from 'ember-concurrency';
+import { assign } from '@ember/polyfills';
+import { guidFor } from '@ember/object/internals';
+import { isEmpty } from '@ember/utils';
+import { runInDebug } from '@ember/debug';
+import Mixin from '@ember/object/mixin';
 
 const {
-  assign,
   Logger,
-  guidFor,
-  isEmpty,
-  runInDebug,
   Copyable
 } = Ember;
 
@@ -36,7 +37,7 @@ const DEFAULT_OPTIONS = {
   relationships: {}
 };
 
-export default Ember.Mixin.create({
+export default Mixin.create({
   /**
    * Copyable options for the specific model. See DEFAULT_OPTIONS for details
    *
