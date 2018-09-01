@@ -5,13 +5,13 @@ import { COPY_TASK, COPY_TASK_RUNNER, IS_COPYABLE } from 'ember-data-copyable/-p
 import { task, all } from 'ember-concurrency';
 import { assign } from '@ember/polyfills';
 import { guidFor } from '@ember/object/internals';
+import { Copyable } from 'ember-copy';
 import { isEmpty } from '@ember/utils';
 import { runInDebug } from '@ember/debug';
 import Mixin from '@ember/object/mixin';
 
 const {
   Logger,
-  Copyable
 } = Ember;
 
 const {
@@ -145,7 +145,8 @@ export default Mixin.create({
         let value = this.get(name);
 
         if (Copyable && Copyable.detect(value)) {
-          // "value" is an Ember.Object using the Ember.Copyable API (if you use
+          // "value" is an Ember.Object using the ember-copy addon
+          // (ie. old deprecated Ember.Copyable API - if you use
           // the "Ember Data Model Fragments" addon and "value" is a fragment or
           // if use your own serializer where you deserialize a value to an
           // Ember.Object using this Ember.Copyable API)
