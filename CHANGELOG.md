@@ -1,6 +1,13 @@
 Changelog
 =========
 
+## v0.4.1
+
+### Pull Requests
+
+- [#22](https://github.com/offirgolan/ember-data-copyable/pull/22)  Use `ember-copy` addon to support "Copyable" objects
+ *by [mpirio](https://github.com/mpirio)*
+
 ## v0.4.0
 
 ### Pull Requests
