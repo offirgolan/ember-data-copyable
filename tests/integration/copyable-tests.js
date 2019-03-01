@@ -43,11 +43,14 @@ export default function generateTests(options = { async: false }) {
 
     await run(async () => {
       if (options.async) {
-        await allSettled([ model.get('foos'), model.get('bar') ]);
+        await allSettled([model.get('foos'), model.get('bar')]);
       }
 
       assert.equal(model.get('bar.id'), copy.get('bar.id'));
-      assert.deepEqual(model.get('foos').getEach('id'), copy.get('foos').getEach('id'));
+      assert.deepEqual(
+        model.get('foos').getEach('id'),
+        copy.get('foos').getEach('id')
+      );
     });
   });
 
@@ -137,7 +140,10 @@ export default function generateTests(options = { async: false }) {
 
       assert.notEqual(model.get('foos'), copy.get('foos'));
       assert.equal(model.get('foos.length'), copy.get('foos.length'));
-      assert.deepEqual(model.get('foos').getEach('property'), copy.get('foos').getEach('property'));
+      assert.deepEqual(
+        model.get('foos').getEach('property'),
+        copy.get('foos').getEach('property')
+      );
     });
   });
 
@@ -164,7 +170,10 @@ export default function generateTests(options = { async: false }) {
       }
 
       assert.equal(model.get('foos.length'), copy.get('foos.length'));
-      assert.deepEqual(model.get('foos').getEach('id'), copy.get('foos').getEach('id'));
+      assert.deepEqual(
+        model.get('foos').getEach('id'),
+        copy.get('foos').getEach('id')
+      );
     });
   });
 
@@ -226,7 +235,10 @@ export default function generateTests(options = { async: false }) {
       assert.equal(copy.get('fooCycles.lastObject.property'), '2');
 
       if (options.async) {
-        assert.equal(await copy.get('fooCycles.firstObject'), await copy.get('fooCycle'));
+        assert.equal(
+          await copy.get('fooCycles.firstObject'),
+          await copy.get('fooCycle')
+        );
       } else {
         assert.equal(copy.get('fooCycles.firstObject'), copy.get('fooCycle'));
       }
