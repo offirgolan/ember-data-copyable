@@ -10,26 +10,24 @@ moduleFor('copyable', 'Integration | Copyable | options', {
   },
 
   afterEach() {
-   this.server.shutdown();
- }
+    this.server.shutdown();
+  }
 });
 
 test('it overwrites attributes', async function(assert) {
-  assert.expect(4);
+  assert.expect(3);
 
   let model = this.store.peekRecord('bar', 1);
 
   await run(async () => {
     let copy = await model.copy(true, {
       overwrite: {
-        id: 42,
         property: null,
         unknownProp: '_bar_',
         foo: this.store.createRecord('foo', { property: '_foo_' })
       }
     });
 
-    assert.equal(copy.get('id'), 42);
     assert.equal(copy.get('property'), null);
     assert.equal(copy.get('unknownProp'), '_bar_');
     assert.equal(copy.get('foo.property'), '_foo_');
@@ -72,23 +70,19 @@ test('it copes other attributes', async function(assert) {
 });
 
 test('it copies with nested options', async function(assert) {
-  assert.expect(3);
+  assert.expect(1);
 
   let model = this.store.peekRecord('bar', 1);
 
   await run(async () => {
     let copy = await model.copy(true, {
-      overwrite: { id: 42 },
       relationships: {
         foo: {
-          overwrite: { id: 22 },
           ignoreAttributes: ['property']
         }
       }
     });
 
-    assert.equal(copy.get('id'), 42);
-    assert.equal(copy.get('foo.id'), 22);
     assert.notOk(copy.get('foo.property'));
   });
 });

@@ -5,7 +5,7 @@ import { getOwner } from '@ember/application';
 
 export default function setupMirage(application, options) {
   // Register our models
-  let Models = defineModels(application, options);
+  const Models = defineModels(application, options);
 
   // Setup Mirage Server
   application.server = startMirage();

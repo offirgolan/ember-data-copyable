@@ -26,6 +26,7 @@ ember install ember-data-copyable
 - ### [Changelog](CHANGELOG.md)
 
 ## Looking for help?
+
 If it is a bug [please open an issue on GitHub](http://github.com/offirgolan/ember-data-copyable/issues).
 
 ## Setup
@@ -66,22 +67,22 @@ Once the model is setup, we can use the `copy` method on an instance to duplicat
 ### Copy Method Signature
 
 ```js
-async function copy(deep = false, options = {}) {};
+async function copy(deep = false, options = {}) {}
 ```
 
 - `deep` : _Boolean_
 
-    If __false__ a shallow copy of the model's attributes will be created.
-    All relationships will be copied over by reference.
+  If **false** a shallow copy of the model's attributes will be created.
+  All relationships will be copied over by reference.
 
-    If __true__, a deep copy of the model and it's relationships will be created.
-    If a relational model has the Copyable mixin, it will also be deep copied.
+  If **true**, a deep copy of the model and it's relationships will be created.
+  If a relational model has the Copyable mixin, it will also be deep copied.
 
 - `options` : _Object_
 
-    Copy options. See [options](#options) for more details.
+  Copy options. See [options](#options) for more details.
 
-    __NOTE:__ Options passed into the copy method take precedence over those specified on the model.
+  **NOTE:** Options passed into the copy method take precedence over those specified on the model.
 
 Returns a cancelable promise like [ember-concurrency](https://github.com/machty/ember-concurrency) TaskInstance.
 
@@ -92,19 +93,24 @@ Returns a cancelable promise like [ember-concurrency](https://github.com/machty/
 ```js
 const model = this.get('store').peekRecord('user', 1);
 
-model.copy(true, {
-  ignoreAttributes: ['guid'],
-  copyByReference: ['address'],
-  overwrite: {
-    id: 2,
-    firstName: 'Offir'
-  }
-}).then((copy) => {
-  // Handle success
-  return copy.save();
-}, (e) => {
-  // Handle error or cancellation
-})
+model
+  .copy(true, {
+    ignoreAttributes: ['guid'],
+    copyByReference: ['address'],
+    overwrite: {
+      id: 2,
+      firstName: 'Offir'
+    }
+  })
+  .then(
+    copy => {
+      // Handle success
+      return copy.save();
+    },
+    e => {
+      // Handle error or cancellation
+    }
+  );
 ```
 
 #### Task Cancellation
@@ -130,7 +136,7 @@ passed into the `copy` method.
 Attributes to ignore when copying.
 
 ```js
-ignoreAttributes: ['guid', 'address']
+ignoreAttributes: ['guid', 'address'];
 ```
 
 ### `otherAttributes`
@@ -139,7 +145,7 @@ Other attributes to copy over that are not defined via DS.attr, DS.belongsTo,
 or DS.hasMany.
 
 ```js
-otherAttributes: ['timestamp', 'someFlag']
+otherAttributes: ['timestamp', 'someFlag'];
 ```
 
 ### `copyByReference`
@@ -148,7 +154,7 @@ Attributes to copy only by reference. If the attribute has the `Copyable` mixin,
 be ignored and not be copied, just copied by reference.
 
 ```js
-copyByReference: ['friends']
+copyByReference: ['friends'];
 ```
 
 ### `overwrite`
