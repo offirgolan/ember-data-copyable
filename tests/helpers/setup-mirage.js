@@ -16,7 +16,9 @@ export default function setupMirage(application, options) {
   if (!options.async) {
     // Pre-fetch all models and add them to the store if its not async
     return RSVP.all(
-      Object.keys(Models).map(name => application.store.findAll(name))
+      Object.keys(Models)
+        .filter(name => name !== 'foo-fragment')
+        .map(name => application.store.findAll(name))
     );
   }
 }

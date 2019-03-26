@@ -154,14 +154,14 @@ export default Mixin.create({
       ) {
         let value = this.get(name);
 
-        if (Copyable && Copyable.detect(value)) {
+        if ((Copyable && Copyable.detect(value)) || (value && value._isFragment)) {
           // "value" is an Ember.Object using the ember-copy addon
           // (ie. old deprecated Ember.Copyable API - if you use
           // the "Ember Data Model Fragments" addon and "value" is a fragment or
           // if use your own serializer where you deserialize a value to an
           // Ember.Object using this Ember.Copyable API)
           value = value.copy(deep);
-        } else {
+        } else if (value) {
           const transform = getTransform(this, type, _meta);
 
           // Run the transform on the value. This should guarantee that we get

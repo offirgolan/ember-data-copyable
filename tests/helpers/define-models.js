@@ -3,6 +3,8 @@ import Copyable from 'ember-data-copyable';
 import DS from 'ember-data';
 import config from '../../config/environment';
 import { assign } from '@ember/polyfills';
+import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
+import Fragment from 'ember-data-model-fragments/fragment';
 
 const { attr, Model, belongsTo, hasMany } = DS;
 
@@ -53,7 +55,16 @@ export default function registerModels(application, options) {
     'foo-transform': CopyableModel.extend({
       property: attr('string'),
       object: attr('object')
-    })
+    }),
+
+    'foo-fragment': Fragment.extend({
+      name: attr('string')
+    }),
+
+    'foo-fragment-holder': CopyableModel.extend({
+      foos: fragmentArray('fooFragment'),
+      bar: fragment('fooFragment')
+    }),
   };
 
   Object.keys(Models).forEach(name => {
