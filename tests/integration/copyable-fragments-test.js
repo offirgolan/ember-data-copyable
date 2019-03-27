@@ -1,5 +1,6 @@
 import setupMirage from '../helpers/setup-mirage';
 import { moduleFor, test } from 'ember-qunit';
+import { run } from '@ember/runloop'
 
 moduleFor('copyable', 'Integration | Copyable | fragments', {
   integration: true,
@@ -17,8 +18,11 @@ test('it copies with null fragments', async function(assert) {
   assert.expect(1);
 
   let model = this.store.createRecord('foo-fragment-holder');
+  let copied;
 
-  let copied = await model.copy(true);
+  await run(async () => {
+    copied = await model.copy(true);
+  });
 
   assert.ok(copied);
 });
@@ -30,7 +34,11 @@ test('it copies single framents', async function(assert) {
     bar: { name: 'foo' }
   });
 
-  let copied = await model.copy(true);
+  let copied;
+
+  await run(async () => {
+    copied = await model.copy(true);
+  });
 
   assert.equal(copied.get('bar.name'), 'foo')
 });
@@ -42,7 +50,11 @@ test('it copies fragment arrays', async function(assert) {
     foos: [{ name: 'foo' }]
   });
 
-  let copied = await model.copy(true);
+  let copied;
+
+  await run(async () => {
+    copied = await model.copy(true);
+  });
 
   assert.equal(copied.get('foos.firstObject.name'), 'foo')
 });
