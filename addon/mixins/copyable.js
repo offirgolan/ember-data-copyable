@@ -142,7 +142,7 @@ export default Mixin.create({
     copies[guid] = model;
 
     // Copy all the attributes
-    this.eachAttribute((name, { type, options: attributeOptions }) => {
+    this.eachAttribute((name, { type, isFragment, options: attributeOptions }) => {
       if (ignoreAttributes.includes(name)) {
         return;
       } else if (!isUndefined(overwrite[name])) {
@@ -154,14 +154,14 @@ export default Mixin.create({
       ) {
         let value = this.get(name);
 
-        if ((Copyable && Copyable.detect(value)) || (value && value._isFragment)) {
+        if ((Copyable && Copyable.detect(value)) || (value && isFragment)) {
           // "value" is an Ember.Object using the ember-copy addon
           // (ie. old deprecated Ember.Copyable API - if you use
           // the "Ember Data Model Fragments" addon and "value" is a fragment or
           // if use your own serializer where you deserialize a value to an
           // Ember.Object using this Ember.Copyable API)
           value = value.copy(deep);
-        } else if (value) {
+        } else if (!isFragment) {
           const transform = getTransform(this, type, _meta);
 
           // Run the transform on the value. This should guarantee that we get
