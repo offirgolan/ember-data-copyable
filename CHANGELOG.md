@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.0
+
+### Pull Requests
+
+- [#28](https://github.com/offirgolan/ember-data-copyable/pull/28) add support for ember-data-model-fragments _by [jakesjews](https://github.com/jakesjews)_
+
 ## v1.0.0
 
 ### Pull Requests
