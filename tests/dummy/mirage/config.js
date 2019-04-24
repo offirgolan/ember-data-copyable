@@ -29,4 +29,7 @@ export function testConfig() {
 
   this.get('/foo-transforms');
   this.get('/foo-transforms/:id');
+
+  this.get('/foo-fragment-holders');
+  this.get('/foo-fragment-holders/:id');
 }
