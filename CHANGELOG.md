@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.1
+
+### Pull Requests
+
+- [#29](https://github.com/offirgolan/ember-data-copyable/pull/29) Allow newer versions of ember-concurrency _by [jakesjews](https://github.com/jakesjews)_
+
 ## v1.1.0
 
 ### Pull Requests
