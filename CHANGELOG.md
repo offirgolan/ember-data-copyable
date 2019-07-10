@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.1.2
+
+### Pull Requests
+
+- [#30](https://github.com/offirgolan/ember-data-copyable/pull/30) allow e-c ^1.0.0 _by [miguelcobain](https://github.com/miguelcobain)_
+
 ## v1.1.1
 
 ### Pull Requests
