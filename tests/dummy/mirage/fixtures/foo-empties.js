@@ -1,6 +1,6 @@
 export default [
   {
     id: 1,
-    property: '2'
-  }
+    property: '2',
+  },
 ];

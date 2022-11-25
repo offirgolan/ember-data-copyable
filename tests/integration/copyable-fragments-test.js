@@ -1,60 +1,41 @@
 import setupMirage from '../helpers/setup-mirage';
-import { moduleFor, test } from 'ember-qunit';
-import { run } from '@ember/runloop'
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-moduleFor('copyable', 'Integration | Copyable | fragments', {
-  integration: true,
+module('Integration | Copyable | fragments', function (hooks) {
+  setupTest(hooks);
+  setupMirage(hooks, { async: true });
 
-  beforeEach() {
-    return setupMirage(this, { async: true });
-  },
+  test('it copies with null fragments', async function (assert) {
+    assert.expect(1);
 
-  afterEach() {
-   this.server.shutdown();
- }
-});
+    let model = this.store.createRecord('foo-fragment-holder');
+    let copied = await model.copy(true);
 
-test('it copies with null fragments', async function(assert) {
-  assert.expect(1);
-
-  let model = this.store.createRecord('foo-fragment-holder');
-  let copied;
-
-  await run(async () => {
-    copied = await model.copy(true);
+    assert.ok(copied);
   });
 
-  assert.ok(copied);
-});
+  test('it copies single framents', async function (assert) {
+    assert.expect(1);
 
-test('it copies single framents', async function(assert) {
-  assert.expect(1);
+    let model = this.store.createRecord('foo-fragment-holder', {
+      bar: { name: 'foo' },
+    });
 
-  let model = this.store.createRecord('foo-fragment-holder', {
-    bar: { name: 'foo' }
+    let copied = await model.copy(true);
+
+    assert.equal(copied.get('bar.name'), 'foo');
   });
 
-  let copied;
+  test('it copies fragment arrays', async function (assert) {
+    assert.expect(1);
 
-  await run(async () => {
-    copied = await model.copy(true);
+    let model = this.store.createRecord('foo-fragment-holder', {
+      foos: [{ name: 'foo' }],
+    });
+
+    let copied = await model.copy(true);
+
+    assert.equal(copied.get('foos.firstObject.name'), 'foo');
   });
-
-  assert.equal(copied.get('bar.name'), 'foo')
-});
-
-test('it copies fragment arrays', async function(assert) {
-  assert.expect(1);
-
-  let model = this.store.createRecord('foo-fragment-holder', {
-    foos: [{ name: 'foo' }]
-  });
-
-  let copied;
-
-  await run(async () => {
-    copied = await model.copy(true);
-  });
-
-  assert.equal(copied.get('foos.firstObject.name'), 'foo')
 });

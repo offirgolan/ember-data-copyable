@@ -1,4 +1,5 @@
 // var RSVP = require('rsvp');
+// eslint-disable-next-line node/no-unpublished-require
 var generateChangelog = require('ember-cli-changelog/lib/tasks/release-with-changelog');
 
 // For details on each option run `ember help release`
@@ -12,5 +13,5 @@ module.exports = {
   // strategy: 'date',
   // format: 'YYYY-MM-DD',
   // timezone: 'America/Los_Angeles',
-  beforeCommit: generateChangelog
+  beforeCommit: generateChangelog,
 };

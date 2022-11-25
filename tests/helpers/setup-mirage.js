@@ -1,24 +1,26 @@
 import defineModels from './define-models';
-import { startMirage } from 'dummy/initializers/ember-cli-mirage';
-import RSVP from 'rsvp';
-import { getOwner } from '@ember/application';
+import { setupMirage } from 'ember-cli-mirage/test-support';
 
-export default function setupMirage(application, options) {
-  // Register our models
-  const Models = defineModels(application, options);
+let Models;
 
-  // Setup Mirage Server
-  application.server = startMirage();
+export default function setupMirageAndModels(hooks, options) {
+  hooks.beforeEach(function () {
+    // Register our models
+    Models = defineModels(options, this.owner);
+  });
 
-  // Setup the store
-  application.store = getOwner(application).lookup('service:store');
+  setupMirage(hooks);
 
-  if (!options.async) {
-    // Pre-fetch all models and add them to the store if its not async
-    return RSVP.all(
-      Object.keys(Models)
-        .filter(name => name !== 'foo-fragment')
-        .map(name => application.store.findAll(name))
-    );
-  }
+  hooks.beforeEach(async function () {
+    this.store = this.owner.lookup('service:store');
+
+    if (!options.async) {
+      // Pre-fetch all models and add them to the store if its not async
+      await Promise.all(
+        Object.keys(Models)
+          .filter((name) => name !== 'foo-fragment')
+          .map((name) => this.store.findAll(name, { reload: true }))
+      );
+    }
+  });
 }

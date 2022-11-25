@@ -11,6 +11,7 @@ import { getOwner } from '@ember/application';
  * @return {DS.Transform}
  */
 export default function getTransform(model, type, _meta) {
-  _meta.transforms[type] = _meta.transforms[type] || getOwner(model).lookup(`transform:${type}`);
+  _meta.transforms[type] =
+    _meta.transforms[type] || getOwner(model).lookup(`transform:${type}`);
   return _meta.transforms[type];
 }

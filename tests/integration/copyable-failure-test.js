@@ -1,52 +1,37 @@
 import setupMirage from '../helpers/setup-mirage';
-import { moduleFor, test } from 'ember-qunit';
-import { run } from '@ember/runloop';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-moduleFor('copyable', 'Integration | Copyable | failure', {
-  integration: true,
+module('Integration | Copyable | failure', function (hooks) {
+  setupTest(hooks);
+  setupMirage(hooks, { async: true });
 
-  beforeEach() {
-    return setupMirage(this, { async: true });
-  },
+  test('it handles async failures', async function (assert) {
+    assert.expect(2);
 
-  afterEach() {
-   this.server.shutdown();
- }
-});
+    this.server.get('/foos/1', { errors: ['There was an error'] }, 500);
 
-test('it handles async failures', async function(assert) {
-  assert.expect(2);
+    let model = await this.store.findRecord('bar', 1);
 
-  this.server.get('/foos/1', { errors: ['There was an error'] }, 500);
-
-  let model;
-
-  await run(async () => {
-    model = await this.store.findRecord('bar', 1);
-  });
-
-  await run(async () => {
     try {
       await model.copy(true);
     } catch (e) {
       let models = this.store.peekAll('bar');
 
       assert.ok(e);
-      assert.equal(models.get('length'), 1, 'All created copies were cleaned up');
+      assert.equal(
+        models.get('length'),
+        1,
+        'All created copies were cleaned up'
+      );
     }
   });
-});
 
-test('it handles task cancellation', async function(assert) {
-  assert.expect(2);
+  test('it handles task cancellation', async function (assert) {
+    assert.expect(2);
 
-  let model;
+    let model = await this.store.findRecord('bar', 1);
 
-  await run(async () => {
-    model = await this.store.findRecord('bar', 1);
-  });
-
-  await run(async () => {
     try {
       let taskInstance = model.copy(true);
       taskInstance.cancel();
@@ -56,7 +41,11 @@ test('it handles task cancellation', async function(assert) {
       let models = this.store.peekAll('bar');
 
       assert.ok(e);
-      assert.equal(models.get('length'), 1, 'All created copies were cleaned up');
+      assert.equal(
+        models.get('length'),
+        1,
+        'All created copies were cleaned up'
+      );
     }
   });
 });

@@ -1,25 +1,16 @@
 import setupMirage from '../helpers/setup-mirage';
-import { moduleFor, test } from 'ember-qunit';
-import { run } from '@ember/runloop';
+import { module, test } from 'qunit';
+import { setupTest } from 'ember-qunit';
 
-moduleFor('copyable', 'Integration | Copyable | transforms', {
-  integration: true,
+module('Integration | Copyable | transforms', function (hooks) {
+  setupTest(hooks);
+  setupMirage(hooks, { async: false });
 
-  beforeEach() {
-    return setupMirage(this, { async: false });
-  },
+  test('it handles object transform', async function (assert) {
+    assert.expect(3);
 
-  afterEach() {
-   this.server.shutdown();
- }
-});
+    let model = this.store.peekRecord('foo-transform', 1);
 
-test('it handles object transform', async function(assert) {
-  assert.expect(3);
-
-  let model = this.store.peekRecord('foo-transform', 1);
-
-  await run(async () => {
     let copy = await model.copy(true);
 
     assert.equal(model.get('object.foo'), 'bar');

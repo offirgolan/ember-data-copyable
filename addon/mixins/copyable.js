@@ -3,7 +3,7 @@ import isUndefined from 'ember-data-copyable/utils/is-undefined';
 import {
   COPY_TASK,
   COPY_TASK_RUNNER,
-  IS_COPYABLE
+  IS_COPYABLE,
 } from 'ember-data-copyable/-private/symbols';
 import { task, all } from 'ember-concurrency';
 import { assign } from '@ember/polyfills';
@@ -31,9 +31,10 @@ const DEFAULT_OPTIONS = {
   overwrite: {},
 
   // Relationship options
-  relationships: {}
+  relationships: {},
 };
 
+// eslint-disable-next-line ember/no-new-mixins
 export default Mixin.create({
   /**
    * Copyable options for the specific model. See DEFAULT_OPTIONS for details
@@ -71,9 +72,9 @@ export default Mixin.create({
    * @type {Task}
    * @private
    */
-  [COPY_TASK_RUNNER]: task(function*(deep, options) {
+  [COPY_TASK_RUNNER]: task(function* (deep, options) {
     const _meta = { copies: {}, transforms: {} };
-    const store = this.get('store');
+    const store = this.store;
     let isSuccessful = false;
 
     try {
@@ -95,14 +96,12 @@ export default Mixin.create({
         runInDebug(() =>
           // eslint-disable-next-line no-console
           console.error(
-            `[ember-data-copyable] Failed to copy model '${this}'. Cleaning up ${
-              copiesKeys.length
-            } created copies...`
+            `[ember-data-copyable] Failed to copy model '${this}'. Cleaning up ${copiesKeys.length} created copies...`
           )
         );
 
         // Unload all created records
-        copiesKeys.forEach(key => store.unloadRecord(_meta.copies[key]));
+        copiesKeys.forEach((key) => store.unloadRecord(_meta.copies[key]));
       }
     }
   }).drop(),
@@ -116,18 +115,14 @@ export default Mixin.create({
    * @type {Task}
    * @private
    */
-  [COPY_TASK]: task(function*(deep, options, _meta) {
-    options = assign({}, DEFAULT_OPTIONS, this.get('copyableOptions'), options);
+  [COPY_TASK]: task(function* (deep, options, _meta) {
+    options = assign({}, DEFAULT_OPTIONS, this.copyableOptions, options);
 
-    const {
-      ignoreAttributes,
-      otherAttributes,
-      copyByReference,
-      overwrite
-    } = options;
+    const { ignoreAttributes, otherAttributes, copyByReference, overwrite } =
+      options;
     const { copies } = _meta;
     const { modelName } = this.constructor;
-    const store = this.get('store');
+    const store = this.store;
     const guid = guidFor(this);
     const relationships = [];
     let attrs = {};
@@ -142,39 +137,41 @@ export default Mixin.create({
     copies[guid] = model;
 
     // Copy all the attributes
-    this.eachAttribute((name, { type, isFragment, options: attributeOptions }) => {
-      if (ignoreAttributes.includes(name)) {
-        return;
-      } else if (!isUndefined(overwrite[name])) {
-        attrs[name] = overwrite[name];
-      } else if (
-        !isEmpty(type) &&
-        !copyByReference.includes(name) &&
-        !PRIMITIVE_TYPES.includes(type)
-      ) {
-        let value = this.get(name);
+    this.eachAttribute(
+      (name, { type, isFragment, options: attributeOptions }) => {
+        if (ignoreAttributes.includes(name)) {
+          return;
+        } else if (!isUndefined(overwrite[name])) {
+          attrs[name] = overwrite[name];
+        } else if (
+          !isEmpty(type) &&
+          !copyByReference.includes(name) &&
+          !PRIMITIVE_TYPES.includes(type)
+        ) {
+          let value = this.get(name);
 
-        if ((Copyable && Copyable.detect(value)) || (value && isFragment)) {
-          // "value" is an Ember.Object using the ember-copy addon
-          // (ie. old deprecated Ember.Copyable API - if you use
-          // the "Ember Data Model Fragments" addon and "value" is a fragment or
-          // if use your own serializer where you deserialize a value to an
-          // Ember.Object using this Ember.Copyable API)
-          value = value.copy(deep);
-        } else if (!isFragment) {
-          const transform = getTransform(this, type, _meta);
+          if ((Copyable && Copyable.detect(value)) || (value && isFragment)) {
+            // "value" is an Ember.Object using the ember-copy addon
+            // (ie. old deprecated Ember.Copyable API - if you use
+            // the "Ember Data Model Fragments" addon and "value" is a fragment or
+            // if use your own serializer where you deserialize a value to an
+            // Ember.Object using this Ember.Copyable API)
+            value = value.copy(deep);
+          } else if (!isFragment) {
+            const transform = getTransform(this, type, _meta);
 
-          // Run the transform on the value. This should guarantee that we get
-          // a new instance.
-          value = transform.serialize(value, attributeOptions);
-          value = transform.deserialize(value, attributeOptions);
+            // Run the transform on the value. This should guarantee that we get
+            // a new instance.
+            value = transform.serialize(value, attributeOptions);
+            value = transform.deserialize(value, attributeOptions);
+          }
+
+          attrs[name] = value;
+        } else {
+          attrs[name] = this.get(name);
         }
-
-        attrs[name] = value;
-      } else {
-        attrs[name] = this.get(name);
       }
-    });
+    );
 
     // Get all the relationship data
     this.eachRelationship((name, meta) => {
@@ -247,5 +244,5 @@ export default Mixin.create({
     model.setProperties(attrs);
 
     return model;
-  })
+  }),
 });
