@@ -4,6 +4,7 @@ import Model, { attr, belongsTo, hasMany } from '@ember-data/model';
 import config from '../../config/environment';
 import { fragment, fragmentArray } from 'ember-data-model-fragments/attributes';
 import Fragment from 'ember-data-model-fragments/fragment';
+import { computed } from '@ember/object';
 
 const CopyableModel = Model.extend(Copyable);
 
@@ -64,6 +65,44 @@ export default function defineModels(options, owner) {
     'foo-fragment-holder': CopyableModel.extend({
       foos: fragmentArray('fooFragment'),
       bar: fragment('fooFragment'),
+    }),
+
+    'override-options-parent': CopyableModel.extend({
+      property: attr('string'),
+      overrideOptionsChilden: hasMany('override-options-child', options),
+      copyableOptions: computed(function () {
+        return {
+          overwrite: {
+            property: 'overriden',
+          },
+        };
+      }),
+      otherOptions: computed(function () {
+        return {
+          overwrite: {
+            property: 'derp',
+          },
+        };
+      }),
+    }),
+
+    'override-options-child': CopyableModel.extend({
+      property: attr('string'),
+      overrideOptionsParent: belongsTo('overrideOptionsParent', options),
+      otherOptions: computed(function () {
+        return {
+          overwrite: {
+            property: 'herp',
+          },
+        };
+      }),
+      copyableOptions: computed(function () {
+        return {
+          overwrite: {
+            property: 'overriden-child',
+          },
+        };
+      }),
     }),
   };
 

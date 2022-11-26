@@ -6,7 +6,6 @@ import {
   IS_COPYABLE,
 } from 'ember-data-copyable/-private/symbols';
 import { task, all } from 'ember-concurrency';
-import { assign } from '@ember/polyfills';
 import { guidFor } from '@ember/object/internals';
 import { Copyable } from 'ember-copy';
 import { isEmpty } from '@ember/utils';
@@ -77,6 +76,10 @@ export default Mixin.create({
     const store = this.store;
     let isSuccessful = false;
 
+    if (options?.optionsPropertyName) {
+      _meta.optionsPropertyName = options.optionsPropertyName;
+    }
+
     try {
       const model = yield this.get(COPY_TASK).perform(deep, options, _meta);
       isSuccessful = true;
@@ -116,7 +119,13 @@ export default Mixin.create({
    * @private
    */
   [COPY_TASK]: task(function* (deep, options, _meta) {
-    options = assign({}, DEFAULT_OPTIONS, this.copyableOptions, options);
+    const optionsPropertyName = _meta.optionsPropertyName ?? 'copyableOptions';
+    options = Object.assign(
+      {},
+      DEFAULT_OPTIONS,
+      this[optionsPropertyName],
+      options
+    );
 
     const { ignoreAttributes, otherAttributes, copyByReference, overwrite } =
       options;
@@ -238,7 +247,11 @@ export default Mixin.create({
 
     // Build the final attrs pojo by merging otherAttributes, the copied
     // attributes, and ant overwrites specified.
-    attrs = assign(this.getProperties(otherAttributes), attrs, overwrite);
+    attrs = Object.assign(
+      this.getProperties(otherAttributes),
+      attrs,
+      overwrite
+    );
 
     // Set the properties on the model
     model.setProperties(attrs);

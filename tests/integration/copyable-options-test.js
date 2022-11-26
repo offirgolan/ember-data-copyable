@@ -84,4 +84,34 @@ module('Integration | Copyable | options', function (hooks) {
 
     assert.equal(copy.get('bar.foo.id'), 1);
   });
+
+  test('it can use the `copyableOptions` model property for copyable options', async function (assert) {
+    assert.expect(2);
+
+    let model = this.store.peekRecord('override-options-parent', 1);
+
+    let copy = await model.copy(true);
+
+    assert.equal(copy.get('property'), 'overriden');
+    assert.equal(
+      copy.get('overrideOptionsChilden.firstObject.property'),
+      'overriden-child'
+    );
+  });
+
+  test('it can override the options property used for copyable options', async function (assert) {
+    assert.expect(2);
+
+    let model = this.store.peekRecord('override-options-parent', 1);
+
+    let copy = await model.copy(true, {
+      optionsPropertyName: 'otherOptions',
+    });
+
+    assert.equal(copy.get('property'), 'derp');
+    assert.equal(
+      copy.get('overrideOptionsChilden.firstObject.property'),
+      'herp'
+    );
+  });
 });
