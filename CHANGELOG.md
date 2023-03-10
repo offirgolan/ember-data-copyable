@@ -1,5 +1,16 @@
 # Changelog
 
+
+## v1.3.0
+
+- [0e84eb7](https://github.com/offirgolan/ember-data-copyable/commit/0e84eb76508b6d6928679e418d8b01259b96724a) support optionsPropertyName
+ _by [miguelcobain](https://github.com/miguelcobain)_
+- [530c267](https://github.com/offirgolan/ember-data-copyable/commit/530c2678b95628bee6792e0d3cc6a113be5fcc45) update ember-cli project and tests _by [miguelcobain](https://github.com/miguelcobain)_
+
+## v1.2.0
+
+- [#55](https://github.com/offirgolan/ember-data-copyable/pull/55) allow e-c ^2.0.0-rc.1 _by [miguelcobain](https://github.com/miguelcobain)_
+
 ## v1.1.2
 
 ### Pull Requests
